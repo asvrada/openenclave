@@ -342,10 +342,10 @@ if (CODE_COVERAGE)
   if (CMAKE_C_COMPILER_ID MATCHES GNU)
     message(FATAL_ERROR "Code coverage is currently only supported by clang.")
   else ()
-    if (CMAKE_C_COMPILER_VERSION VERSION_LESS 10 OR CMAKE_C_COMPILER_VERSION
-                                                    VERSION_GREATER 10.99)
+    if (CMAKE_C_COMPILER_VERSION VERSION_LESS 11 OR CMAKE_C_COMPILER_VERSION
+                                                    VERSION_GREATER 11.99)
       message(
-        WARNING "Code coverage may not work with clang versions other than 10.")
+        WARNING "Code coverage may not work with clang versions other than 11.")
     endif ()
   endif ()
 
@@ -370,8 +370,8 @@ if (CODE_COVERAGE)
   add_custom_command(
     TARGET code_coverage
     COMMAND
-      lcov -d ${CMAKE_BINARY_DIR} --gcov-tool
-      ${OE_SCRIPTSDIR}/code-coverage/llvm-gcov -c -o cov.info --rc
+      lcov -c -d ${CMAKE_BINARY_DIR} --gcov-tool
+      ${OE_SCRIPTSDIR}/code-coverage/llvm-gcov -o cov.info --rc
       lcov_branch_coverage=1
     COMMAND lcov -a base.info -a cov.info -o cov_total.info --rc
             lcov_branch_coverage=1

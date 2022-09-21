@@ -12,7 +12,7 @@ add_custom_command(
 
 set(USE_LD "")
 if (UNIX)
-  find_program(OE_LLD lld)
+  find_program(OE_LLD lld-11)
   if (NOT OE_LLD)
     # Run tests with default linker. May not lock down alignment issue.
     message(
