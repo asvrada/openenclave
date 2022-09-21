@@ -88,7 +88,7 @@ if (UNIX)
   )
 elseif (WIN32)
   # Update the string when the supported clang version is changed
-  set(CLANG_VERSION "10.0.0")
+  set(CLANG_VERSION "11.1.0")
 
   set(CLANG_INTRINSIC_HEADERS_SEARCH_PATH
       "C:/Program Files/LLVM/lib/clang/${CLANG_VERSION}/include")
