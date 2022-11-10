@@ -95,14 +95,21 @@ if (OE_SGX)
   set_source_files_properties(sgx/td_basic.c PROPERTIES COMPILE_FLAGS
                                                         -fno-stack-protector)
 
-  # Setting "-O2 -fno-omit-frame-pointer -Wno-frame-address" because
-  # for clang-11, usage of __builtin_frame_address(1) is triggering -Wframe-address
-  # To make sure frame pointer works as intented, adding "-O2 -fno-omit-frame-pointer"
-  set_source_files_properties(
-    sgx/calls.c
-    PROPERTIES
-      COMPILE_FLAGS
-      "-O2 -fno-omit-frame-pointer -fno-stack-protector -Wno-frame-address")
+  if (CMAKE_C_COMPILER MATCHES "10$" OR CMAKE_CXX_COMPILER MATCHES "10$")
+    set_source_files_properties(
+      sgx/calls.c PROPERTIES COMPILE_FLAGS
+                             "-O2 -fno-omit-frame-pointer -fno-stack-protector")
+  else ()
+    # Handle clang-11
+    # Setting "-O2 -fno-omit-frame-pointer -Wno-frame-address" because
+    # for clang-11, usage of __builtin_frame_address(1) is triggering -Wframe-address
+    # To make sure frame pointer works as intented, adding "-O2 -fno-omit-frame-pointer"
+    set_source_files_properties(
+      sgx/calls.c
+      PROPERTIES
+        COMPILE_FLAGS
+        "-O2 -fno-omit-frame-pointer -fno-stack-protector -Wno-frame-address")
+  endif ()
 
   # To avoid the `unused-command-line-argument` warning, which we treat as an
   # error, we explicitly turn off the warning when compiling these assembly
@@ -321,14 +328,22 @@ if (CODE_COVERAGE)
   # avoid conflicts.
   set_source_files_properties(once.c sgx/init.c PROPERTIES COMPILE_FLAGS
                                                            "-fno-profile-arcs")
+  # In additional to existing flags, adding "-fno-profile-arcs" for Code Coverage.
+  if (CMAKE_C_COMPILER MATCHES "10$" OR CMAKE_CXX_COMPILER MATCHES "10$")
+    set_source_files_properties(
+      sgx/calls.c
+      PROPERTIES
+        COMPILE_FLAGS
+        "-O2 -fno-omit-frame-pointer -fno-stack-protector -fno-profile-arcs")
+  else ()
+    set_source_files_properties(
+      sgx/calls.c
+      PROPERTIES
+        COMPILE_FLAGS
+        "-O2 -fno-omit-frame-pointer -fno-stack-protector -Wno-frame-address -fno-profile-arcs"
+    )
+  endif ()
 
-  # In additional to existing flags, adding "-fno-profile-arcs"
-  set_source_files_properties(
-    sgx/calls.c
-    PROPERTIES
-      COMPILE_FLAGS
-      "-O2 -fno-omit-frame-pointer -Wno-frame-address -fno-stack-protector -fno-profile-arcs"
-  )
 endif ()
 
 enclave_compile_definitions(

@@ -342,10 +342,11 @@ if (CODE_COVERAGE)
   if (CMAKE_C_COMPILER_ID MATCHES GNU)
     message(FATAL_ERROR "Code coverage is currently only supported by clang.")
   else ()
-    if (CMAKE_C_COMPILER_VERSION VERSION_LESS 11 OR CMAKE_C_COMPILER_VERSION
+    if (CMAKE_C_COMPILER_VERSION VERSION_LESS 10 OR CMAKE_C_COMPILER_VERSION
                                                     VERSION_GREATER 11.99)
       message(
-        WARNING "Code coverage may not work with clang versions other than 11.")
+        WARNING
+          "Code coverage may not work with clang versions other than 10 or 11.")
     endif ()
   endif ()
 
