@@ -76,6 +76,9 @@ static quote3_error_t (*_sgx_qe_get_quote)(
     uint32_t quote_size,
     uint8_t* p_quote);
 
+static quote3_error_t (*_sgx_qv_set_enclave_load_policy)(
+    sgx_ql_request_policy_t policy);
+
 static quote3_error_t (*_sgx_qv_get_quote_supplemental_data_size)(
     uint32_t* p_data_size);
 
@@ -553,6 +556,10 @@ static void _load_sgx_dcap_qvl_impl(void)
 
     if (_qvl_module)
     {
+        OE_CHECK(_lookup_function(
+            _qvl_module,
+            "sgx_qv_set_enclave_load_policy",
+            (void**)&_sgx_qv_set_enclave_load_policy));
         OE_CHECK(_lookup_function(
             _qvl_module,
             "sgx_qv_get_quote_supplemental_data_size",
@@ -1119,6 +1126,25 @@ oe_result_t oe_sgx_get_supported_attester_format_ids(
     *format_ids_size = size;
 
     result = OE_OK;
+
+done:
+    return result;
+}
+
+oe_result_t oe_sgx_qv_set_enclave_load_policy(int policy)
+{
+    oe_result_t result = OE_UNEXPECTED;
+    if (TRY_TO_USE_SGX_DCAP_QVL() && _load_sgx_dcap_qvl())
+    {
+        quote3_error_t error = _sgx_qv_set_enclave_load_policy(policy);
+        if (error != SGX_QL_SUCCESS)
+            OE_RAISE_MSG(
+                get_oe_result_t(error),
+                "_sgx_qv_get_quote_supplemental_data_size failed with "
+                "quote3_error_t=%s\n",
+                get_quote3_error_t_string(error));
+        result = OE_OK;
+    }
 
 done:
     return result;

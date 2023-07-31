@@ -34,6 +34,8 @@ oe_result_t oe_sgx_get_supported_attester_format_ids(
     void** format_ids,
     size_t* format_ids_size);
 
+oe_result_t oe_sgx_qv_set_enclave_load_policy(int);
+
 oe_result_t oe_sgx_get_supplemental_data_size(
     const oe_uuid_t* format_id,
     const void* opt_params,

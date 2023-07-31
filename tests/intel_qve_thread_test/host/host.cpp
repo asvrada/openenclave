@@ -22,6 +22,8 @@ static oe_mutex_t mutex = OE_MUTEX_INITIALIZER;
 
 #define SKIP_RETURN_CODE 2
 
+extern "C" oe_result_t oe_sgx_qv_set_enclave_load_policy(int);
+
 static const oe_uuid_t _sgx_quote_uuid = {OE_FORMAT_UUID_SGX_ECDSA};
 static const oe_uuid_t _tdx_quote_uuid = {OE_FORMAT_UUID_TDX_QUOTE_ECDSA};
 typedef struct _input_params
@@ -240,6 +242,17 @@ int main(int argc, const char* argv[])
     // Init Enclave TDX verifier
     {
         oe_result_t result = OE_UNEXPECTED;
+        result = oe_sgx_qv_set_enclave_load_policy(2);
+        if (result != OE_OK)
+        {
+            printf(
+                "Failed oe_sgx_qv_set_enclave_load_policy. result=%u (%s)\n",
+                result,
+                oe_result_str(result));
+            ret = 1;
+            goto done;
+        }
+
         init_tdx_verifier(enclave, &result);
         if (result != OE_OK)
         {
