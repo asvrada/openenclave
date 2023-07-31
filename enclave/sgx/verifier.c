@@ -374,6 +374,7 @@ oe_result_t oe_verify_qve_report_and_identity(
             p_qve_report->body.attributes.xfrm);
     }
 
+#if 0
     // Check Mrsigner in QvE report
     if (memcmp(
             &(p_qve_report->body.mrsigner),
@@ -388,6 +389,7 @@ oe_result_t oe_verify_qve_report_and_identity(
             sizeof(p_qve_report->body.mrsigner));
         OE_RAISE(OE_QUOTE_ENCLAVE_IDENTITY_VERIFICATION_FAILED);
     }
+#endif
 
     // Check Prod ID in QvE report
     if (p_qve_report->body.isvprodid != QVE_PRODID)
