@@ -29,9 +29,9 @@ static const uint64_t g_qve_attribute_xfrm = 0x0000000000000000;
 static const uint64_t g_qve_attribute_flags_mask = 0xFFFFFFFFFFFFFFFb;
 static const uint64_t g_qve_attribute_xfrm_mask = 0x0000000000000000;
 
-#define DISABLE_MRSIGNER_CHECK 1
+#define MRSIGNER_CHECK 0
 
-#if DISABLE_MRSIGNER_CHECK
+#if MRSIGNER_CHECK
 static const uint8_t g_qve_mrsigner[32] = {
     0x8C, 0x4F, 0x57, 0x75, 0xD7, 0x96, 0x50, 0x3E, 0x96, 0x13, 0x7F,
     0x77, 0xC6, 0x8A, 0x82, 0x9A, 0x00, 0x56, 0xAC, 0x8D, 0xED, 0x70,
@@ -43,7 +43,7 @@ static const uint16_t QVE_PRODID = 2;
 // Defense in depth, threshold must be greater or equal to least QvE ISV SVN
 const uint16_t LEAST_QVE_ISVSVN = 3;
 
-#if DISABLE_MRSIGNER_CHECK
+#if MRSIGNER_CHECK
 static void dump_info(
     const char* title,
     const uint8_t* data,
@@ -380,7 +380,7 @@ oe_result_t oe_verify_qve_report_and_identity(
             p_qve_report->body.attributes.xfrm);
     }
 
-#if DISABLE_MRSIGNER_CHECK
+#if MRSIGNER_CHECK
     // Check Mrsigner in QvE report
     if (memcmp(
             &(p_qve_report->body.mrsigner),
