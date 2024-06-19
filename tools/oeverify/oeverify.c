@@ -6,12 +6,15 @@
 #include <openenclave/attestation/sgx/evidence.h>
 #include <openenclave/attestation/tdx/evidence.h>
 #include <openenclave/attestation/verifier.h>
+#include <openenclave/host.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 static const oe_uuid_t oe_format_default = {OE_FORMAT_UUID_SGX_ECDSA};
 static const oe_uuid_t _tdx_quote_uuid = {OE_FORMAT_UUID_TDX_QUOTE_ECDSA};
+static const oe_uuid_t _legacy_report_remote_uuid = {
+    OE_FORMAT_UUID_LEGACY_REPORT_REMOTE};
 
 typedef struct _evidence_uuid_desc
 {
@@ -220,19 +223,41 @@ oe_result_t verify_evidence(
                 &endorsement_file_size);
         }
 
-        result = oe_verify_evidence(
-            &format,
-            evidence_data,
-            evidence_file_size,
-            endorsement_data,
-            endorsement_file_size,
-            NULL,
-            0,
-            &claims,
-            &claims_length);
+        if (memcmp(&format, &_legacy_report_remote_uuid, sizeof(oe_uuid_t)) ==
+            0)
+        {
+            oe_report_t parsed_report;
+
+            result = oe_verify_report(
+                NULL, evidence_data, evidence_file_size, &parsed_report);
+
+            if (result == OE_OK)
+            {
+                fprintf(stdout, "Report verification succeeded\n");
+            }
+            else
+            {
+                fprintf(
+                    stdout, "Report verification failed, result: %d\n", result);
+            }
+        }
+        else
+        {
+            result = oe_verify_evidence(
+                &format,
+                evidence_data,
+                evidence_file_size,
+                endorsement_data,
+                endorsement_file_size,
+                NULL,
+                0,
+                &claims,
+                &claims_length);
+
+            print_and_verify_claims(&format, claims, claims_length);
+        }
     }
 
-    print_and_verify_claims(&format, claims, claims_length);
 
     if (evidence_data != NULL)
     {
