@@ -152,6 +152,7 @@ if (UNIX
     add_subdirectory(ecall_conflict)
     add_subdirectory(ecall_ocall)
     add_subdirectory(echo)
+    add_subdirectory(zijie_symcrypt)
     add_subdirectory(enclaveparam)
     add_subdirectory(file)
     add_subdirectory(getenclave)
