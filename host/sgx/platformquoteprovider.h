@@ -78,9 +78,14 @@ typedef sgx_plat_error_t (*sgx_free_quote_verification_collateral_t)(
  * Data types and interfaces for configuration the platform quote provider
  * library.
  ****************************************************************************/
+// Copied from Azure DCAP:
+// https://github.com/microsoft/Azure-DCAP-Client/blob/a9af7b46561859b68f112b20b6ef00a49a197c22/src/dcap_provider.h#L104C1-L109C22
+// TODO: Intel DCAP also defined the same type, with conflicting contents
+// https://github.com/intel/SGXDataCenterAttestationPrimitives/blob/e945c58bff60bb96e4daca57b73c93f96b14418a/QuoteGeneration/quote_wrapper/common/inc/sgx_ql_lib_common.h#L239
 typedef enum _sgx_ql_log_level_t
 {
     SGX_QL_LOG_ERROR,
+    SGX_QL_LOG_WARNING,
     SGX_QL_LOG_INFO,
     SGX_QL_LOG_NONE
 } sgx_ql_log_level_t;
