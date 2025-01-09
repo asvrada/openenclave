@@ -24,10 +24,11 @@ enclave_include_directories(${ENC_BIN} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 enclave_link_libraries(
   ${ENC_BIN}
   oelibc
-  openenclave::oeenclave
-  openenclave::oesymcryptprovider
-  openenclave::oecryptoopenssl_3
+  oeenclave
+  oesymcryptprovider
+  oecryptoopenssl_3
   ${LIBSYMCRYPT}
-  openenclave::oelibcxx
-  openenclave::oehostsock
-  openenclave::oehostresolver)
+  oelibcxx
+  oehostsock
+  oehostresolver)
+message("LIBSYMCRYPT: ${LIBSYMCRYPT}")
