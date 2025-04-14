@@ -91,6 +91,7 @@ endif ()
 
 if (OE_SGX)
   add_subdirectory(debugger)
+  add_subdirectory(host_perf_test)
   add_subdirectory(host_verify)
   add_subdirectory(invalid_image)
   add_subdirectory(config_id)
