@@ -220,6 +220,27 @@ oe_result_t verify_evidence(
                 &endorsement_data,
                 &endorsement_file_size);
         }
+        else
+        {
+            // Get and Dump endorsement
+            result = oe_get_tdx_endorsements(
+                evidence_data,
+                (uint32_t)evidence_file_size,
+                &endorsement_data,
+                (uint32_t*)&endorsement_file_size);
+            if (result != OE_OK)
+            {
+                printf("Failed to get TDX Endorsement!\n");
+                return result;
+            }
+
+            // Dump endorsement to file
+            FILE* endorsement_file = fopen("tdx_endorsement.bin", "wb");
+            size_t written = fwrite(
+                endorsement_data, 1, endorsement_file_size, endorsement_file);
+            (void)written;
+            fclose(endorsement_file);
+        }
 
         result = oe_verify_evidence(
             &format,
