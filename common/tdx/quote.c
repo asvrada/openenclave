@@ -61,12 +61,13 @@ oe_result_t oe_verify_quote_with_tdx_endorsements(
     }
 
     result = OE_OK;
-
+done:
+    return result;
 #else
     // Use Intel QVL library for production verification
     uint32_t collateral_expiration_status;
     uint32_t quote_verification_result;
-    uint8_t supplemental_data_out[MAX_SUPPLEMENTAL_DATA_SIZE] = {0};
+    uint8_t* supplemental_data_out = NULL;
     uint32_t supplemental_data_size_out = 0;
     oe_datetime_t validation_time = {0};
     time_t expiration_check_date = 0;
@@ -104,8 +105,7 @@ oe_result_t oe_verify_quote_with_tdx_endorsements(
         &quote_verification_result,
         NULL,
         0,
-        supplemental_data_out,
-        MAX_SUPPLEMENTAL_DATA_SIZE,
+        &supplemental_data_out,
         &supplemental_data_size_out));
 
     if (verification_result)
@@ -113,21 +113,15 @@ oe_result_t oe_verify_quote_with_tdx_endorsements(
 
     if (supplemental_data && supplemental_data_size)
     {
-        *supplemental_data = (uint8_t*)oe_malloc(supplemental_data_size_out);
-        if (!*supplemental_data)
-            OE_RAISE(OE_OUT_OF_MEMORY);
-
-        memcpy(
-            *supplemental_data,
-            supplemental_data_out,
-            supplemental_data_size_out);
-
+        // Transfer ownership of the allocated buffer to the caller.
+        *supplemental_data = (uint8_t*)supplemental_data_out;
         *supplemental_data_size = supplemental_data_size_out;
+        supplemental_data_out = NULL;
     }
 
     result = OE_OK;
-#endif // OEUTIL_TCB_ALLOW_ANY_ROOT_KEY
-
 done:
+    oe_free(supplemental_data_out);
     return result;
+#endif // OEUTIL_TCB_ALLOW_ANY_ROOT_KEY
 }

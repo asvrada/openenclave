@@ -139,7 +139,6 @@ oe_result_t tdx_verify_quote(
     void* p_qve_report_info,
     uint32_t qve_report_info_size,
     void* p_supplemental_data,
-    uint32_t supplemental_data_size,
     uint32_t* p_supplemental_data_size_out)
 {
     // delegate input validation to host/sgx/sgxquote.c:oe_tdx_verify_quote
@@ -170,7 +169,6 @@ oe_result_t tdx_verify_quote(
         p_qve_report_info_internal,
         qve_report_info_size,
         p_supplemental_data,
-        supplemental_data_size,
         p_supplemental_data_size_out));
 
     result = (oe_result_t)retval;

@@ -15,6 +15,10 @@ OE_EXTERNC_BEGIN
 **
 ** tdx_verify_quote()
 **
+** On success, if p_supplemental_data is non-NULL, *p_supplemental_data is
+** set to a heap-allocated buffer. The caller is responsible for freeing
+** this supplemental data buffer with oe_free().
+**
 **==============================================================================
 */
 oe_result_t tdx_verify_quote(
@@ -30,8 +34,7 @@ oe_result_t tdx_verify_quote(
     uint32_t* p_quote_verification_result,
     void* p_qve_report_info,
     uint32_t qve_report_info_size,
-    void* p_supplemental_data,
-    uint32_t supplemental_data_size,
+    void** p_supplemental_data,
     uint32_t* p_supplemental_data_size_out);
 
 OE_EXTERNC_END

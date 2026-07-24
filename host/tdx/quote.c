@@ -18,33 +18,32 @@ oe_result_t tdx_verify_quote(
     uint32_t* p_quote_verification_result,
     void* p_qve_report_info,
     uint32_t qve_report_info_size,
-    void* p_supplemental_data,
-    uint32_t supplemental_data_size,
+    void** p_supplemental_data,
     uint32_t* p_supplemental_data_size_out)
 {
     // delegate input validation to host/sgx/sgxquote.c:oe_tdx_verify_quote
     oe_result_t result = OE_UNEXPECTED;
+    uint8_t* supplemental_data = NULL;
+    uint32_t supplemental_data_size = 0;
 
     if (p_supplemental_data && !p_supplemental_data_size_out)
         OE_RAISE(OE_INVALID_PARAMETER);
 
-    /* Try to get supplemental data size if needed */
+    /* Query the exact supplemental data size and allocate a buffer */
     if (p_supplemental_data)
     {
         uint32_t version = 0;
-        uint32_t size = 0;
 
         OE_CHECK(oe_tdx_get_supplemental_data_size(
-            p_quote, quote_size, &version, &size));
+            p_quote, quote_size, &version, &supplemental_data_size));
 
-        if (supplemental_data_size < size)
-            OE_RAISE(OE_BUFFER_TOO_SMALL);
+        // TODO: check size != 0
 
-        /* Return correct size of the supplemental data size */
-        supplemental_data_size = size;
-        *p_supplemental_data_size_out = size;
+        supplemental_data = (uint8_t*)oe_malloc(supplemental_data_size);
+        if (supplemental_data == NULL)
+            OE_RAISE(OE_OUT_OF_MEMORY);
 
-        memset(p_supplemental_data, 0, supplemental_data_size);
+        memset(supplemental_data, 0, supplemental_data_size);
     }
 
     result = oe_tdx_verify_quote(
@@ -60,7 +59,7 @@ oe_result_t tdx_verify_quote(
         p_quote_verification_result,
         p_qve_report_info,
         qve_report_info_size,
-        p_supplemental_data,
+        supplemental_data,
         supplemental_data_size);
 
     if (p_qve_report_info != NULL)
@@ -76,6 +75,16 @@ oe_result_t tdx_verify_quote(
             oe_result_str(result));
     }
 
+    /* Transfer ownership of the allocated buffer to the caller on success. */
+    if (result == OE_OK && p_supplemental_data)
+    {
+        *p_supplemental_data = supplemental_data;
+        *p_supplemental_data_size_out = supplemental_data_size;
+        supplemental_data = NULL;
+    }
+
 done:
+    oe_free(supplemental_data);
+
     return result;
 }

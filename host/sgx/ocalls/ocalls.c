@@ -412,8 +412,7 @@ oe_result_t oe_verify_tdx_quote_ocall(
     uint32_t* p_quote_verification_result,
     void* p_qve_report_info,
     uint32_t qve_report_size,
-    void* p_supplemental_data,
-    uint32_t supplemental_data_size,
+    void** p_supplemental_data,
     uint32_t* p_supplemental_data_size_out)
 {
     return tdx_verify_quote(
@@ -430,7 +429,6 @@ oe_result_t oe_verify_tdx_quote_ocall(
         p_qve_report_info,
         qve_report_size,
         p_supplemental_data,
-        supplemental_data_size,
         p_supplemental_data_size_out);
 }
 
