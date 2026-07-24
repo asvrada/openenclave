@@ -37,6 +37,10 @@ oe_result_t tdx_verify_quote(
         OE_CHECK(oe_tdx_get_supplemental_data_size(
             p_quote, quote_size, &version, &supplemental_data_size));
 
+        OE_TRACE_INFO(
+            "oe_tdx_get_supplemental_data_size returned size: %u\n",
+            supplemental_data_size);
+
         // TODO: check size != 0
 
         supplemental_data = (uint8_t*)oe_malloc(supplemental_data_size);
